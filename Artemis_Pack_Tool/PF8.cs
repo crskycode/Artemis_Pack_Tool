@@ -123,11 +123,15 @@ namespace Artemis_Pack_Tool
             foreach (var entry in entries)
             {
                 Console.WriteLine($"Adding \"{entry.Path}\"");
-
+                
+                // Load file data
                 var data = File.ReadAllBytes(entry.LocalPath);
 
-                Debug.Assert(writer.BaseStream.Position == entry.Offset);
-                Debug.Assert(data.Length == entry.Length);
+                // Make sure the file are not changed
+                if (writer.BaseStream.Position != entry.Offset || data.Length != entry.Length)
+                {
+                    throw new Exception("File has been changed, please retry.");
+                }
 
                 Encrypt(data, key);
 
